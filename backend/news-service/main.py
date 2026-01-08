@@ -1,12 +1,19 @@
+import json
+import time
 from fastapi import FastAPI
-import httpx
+import pika
 
 
-app = FastAPI()
+def callback(ch, method, properties, body):
+    data = json.loads(body)
+    print("News received:", data)
 
-
-@app.get("/news")
-async def news():
-  async with httpx.AsyncClient() as client:
-    r = await client.get("https://example.com")
-  return {"status": "fetched"}
+while True:
+    try:
+        connection = pika.BlockingConnection(pika.ConnectionParameters("rabbitmq"))
+        channel = connection.channel()
+        channel.queue_declare(queue="content")
+        channel.basic_consume(queue="content", on_message_callback=callback, auto_ack=True)
+        channel.start_consuming()
+    except Exception:
+        time.sleep(5)

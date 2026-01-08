@@ -1,20 +1,31 @@
+import json
 from fastapi import FastAPI
-import pika
-
+import redis.asyncio as redis
+import aio_pika
 
 app = FastAPI()
 
-
-connection = pika.BlockingConnection(pika.ConnectionParameters("rabbitmq"))
-channel = connection.channel()
-channel.queue_declare(queue="content")
-
+r = redis.Redis(host="redis", port=6379)
+contents = []
 
 @app.post("/content")
-def publish_content(content: dict):
-  channel.basic_publish(
-    exchange="",
-    routing_key="content",
-    body=str(content)
-  )
-  return {"published": True}
+async def publish_content(payload: dict):
+    contents.append(payload)
+
+    connection = await aio_pika.connect_robust("amqp://rabbitmq/")
+    async with connection:
+        channel = await connection.channel()
+        queue = await channel.declare_queue("content")
+
+        await channel.default_exchange.publish(
+            aio_pika.Message(body=json.dumps(payload).encode()),
+            routing_key=queue.name,
+        )
+
+    await r.publish("events", f"Content published: {payload['title']}")
+    return {"status": "published"}
+
+
+@app.get("/contents")
+def get_contents():
+    return contents

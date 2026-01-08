@@ -5,8 +5,10 @@ description = "FastAPI microservice"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.128.0",
-    "uvicorn>=0.40.0",
+    "uvicorn[standard]>=0.40.0",
     "strawberry-graphql>=0.288.2",
+    "httpx>=0.28.1",
+    "redis>=7.1.0",
 ]
 [build-system]
 requires = ["setuptools"]
