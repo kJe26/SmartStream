@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "./styles.css";
 
 export default function IoTApp() {
   const [messages, setMessages] = useState<string[]>([]);
@@ -22,13 +23,18 @@ export default function IoTApp() {
   };
 
   return (
-    <div>
-      <h2>IoT / Notifications</h2>
-      <ul>
-        {messages.map((m, i) => <li key={i}>{m}</li>)}
-      </ul>
+    <div className="card">
+      <h2>📡 IoT & Notifications</h2>
 
       <button onClick={analytics}>Send Telemetry</button>
+
+      <ul className="list">
+        {messages.map((m, i) => (
+          <li key={i}>
+            <span className="badge">Event</span> {m}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
