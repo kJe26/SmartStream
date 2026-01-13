@@ -12,9 +12,11 @@ app = FastAPI()
 
 nats = NATS()
 mqtt_task: asyncio.Task | None = None
+mqtt_client = MQTT("iot-service")
 
 @app.on_event("startup")
 async def startup():
+    await mqtt_client.connect("mqtt-broker", 1883)
     await nats.connect("nats://nats:4222")
 
     global mqtt_task
@@ -48,12 +50,12 @@ async def mqtt_loop():
 
 @app.on_event("shutdown")
 async def shutdown():
+    mqtt_client.disconnect()
     if mqtt_task:
         mqtt_task.cancel()
     await nats.close()
 
 @app.post("/telemetry")
 async def telemetry(payload: dict):
-    async with MQTT("mqtt-broker", 1883) as mqtt:
-        await mqtt.publish("sensors/demo", json.dumps(payload))
+    await mqtt_client.publish("sensors/demo", json.dumps(payload))
     return {"sent": True}

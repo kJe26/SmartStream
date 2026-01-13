@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  shell:
+    build:
+      context: ./shell
+      dockerfile: ../Dockerfile
+    container_name: fe-shell
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mf-content
+      - mf-iot
+      - mf-user
+
+  mf-content:
+    build:
+      context: ./mf-content
+      dockerfile: ../Dockerfile
+    container_name: fe-mf-content
+    ports:
+      - "3001:3001"
+
+  mf-iot:
+    build:
+      context: ./mf-iot
+      dockerfile: ../Dockerfile
+    container_name: fe-mf-iot
+    ports:
+      - "3002:3002"
+
+  mf-user:
+    build:
+      context: ./mf-user
+      dockerfile: ../Dockerfile
+    container_name: fe-mf-user
+    ports:
+      - "3003:3003"
