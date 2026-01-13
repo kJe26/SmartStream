@@ -45,6 +45,13 @@ async def contents():
     async with httpx.AsyncClient() as client:
         r = await client.get("http://content-service:8000/contents")
         return r.json()
+    
+
+@app.post("/content")
+async def publish_content(payload: dict):
+    async with httpx.AsyncClient() as client:
+        r = await client.post("http://content-service:8000/content", json=payload)
+        return r.json()
 
 
 @app.post("/telemetry")
@@ -52,6 +59,13 @@ async def telemetry(payload: dict):
     async with httpx.AsyncClient() as client:
         await client.post("http://iot-service:8000/telemetry", json=payload)
     return {"forwarded": True}
+
+
+@app.post("/users")
+async def create_user(user: dict):
+    async with httpx.AsyncClient(timeout=5.0) as client:
+        r = await client.post("http://user-service:8000/users", json=user)
+        return r.json()
 
 
 @strawberry.type

@@ -1,0 +1,20 @@
+{
+  "name": "mf-iot",
+  "private": true,
+  "scripts": {
+    "start": "webpack serve --mode development"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "webpack": "^5.x",
+    "webpack-cli": "^5.x",
+    "webpack-dev-server": "^4.x",
+    "typescript": "^5.x",
+    "ts-loader": "^9.x",
+    "@types/react": "^18.x",
+    "@types/react-dom": "^18.x"
+  }
+}
